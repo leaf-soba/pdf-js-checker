@@ -4,9 +4,12 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FileJSCheckerTest {
+public class FileJSCheckerTest {
 
     private static final String TEST_RESOURCES = "src/test/resources/";
 

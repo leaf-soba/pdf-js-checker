@@ -1,4 +1,3 @@
-import cn.hutool.core.io.FileTypeUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,15 +15,14 @@ public class FileJSChecker {
         if (!file.exists()) {
             throw new IllegalArgumentException("file:" + path + "not exists!");
         }
-        String type = FileTypeUtil.getType(file).toLowerCase();
-        if (!"pdf".equals(type)) {
-            throw new IllegalArgumentException("file:" + path + "is not a pdf!");
-        }
         return containsJavaScript(file);
     }
-    public static boolean containsJavaScript(File file) throws IOException {
-        PDDocument document = PDDocument.load(file);
-        return containsJavaScript(document);
+    public static boolean containsJavaScript(File file) {
+        try (PDDocument document = PDDocument.load(file)) {
+            return containsJavaScript(document);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("file:" + file.getAbsolutePath() + "is not a pdf!");
+        }
     }
     public static boolean containsJavaScript(PDDocument document) {
         Set<COSBase> visited = new HashSet<>();
