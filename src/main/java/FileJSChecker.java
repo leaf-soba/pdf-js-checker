@@ -2,32 +2,38 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 
 public class FileJSChecker {
-    public static boolean safeCheckFile(String path) throws Exception {
+    public static boolean safeCheckFile(String path) {
         File file = new File(path);
         if (!file.exists()) {
-            throw new IllegalArgumentException("file:" + path + "not exists!");
+            throw new IllegalArgumentException("file:" + path + " not exists!");
         }
         return containsJavaScript(file);
     }
-    public static boolean containsJavaScript(File file) {
-        try (PDDocument document = PDDocument.load(file)) {
+    private static boolean containsJavaScript(File file) {
+        try (PDDocument document = Loader.loadPDF(file)) {
             return containsJavaScript(document);
         } catch (IOException e) {
-            throw new IllegalArgumentException("file:" + file.getAbsolutePath() + "is not a pdf!");
+            throw new IllegalArgumentException("file:" + file.getAbsolutePath() +
+                    " may not a pdf! original error message：" + e.getMessage());
         }
     }
-    public static boolean containsJavaScript(PDDocument document) {
+    private static boolean containsJavaScript(PDDocument document) {
         Set<COSBase> visited = new HashSet<>();
-        return document.getDocument().getObjects().stream().parallel()
-                       .anyMatch(cosObject -> containsJavaScriptRecursive(cosObject, visited));
+        PDDocumentCatalog catalog = document.getDocumentCatalog();
+        COSDictionary catalogDict = catalog.getCOSObject();
+        return containsJavaScriptRecursive(catalogDict, visited);
     }
     private static boolean containsJavaScriptRecursive(COSBase cosBase, Set<COSBase> visited) {
         if (cosBase instanceof COSObject) {
