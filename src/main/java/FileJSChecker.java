@@ -7,7 +7,6 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -19,9 +18,6 @@ public class FileJSChecker {
         if (!file.exists()) {
             throw new IllegalArgumentException("file:" + path + " not exists!");
         }
-        return containsJavaScript(file);
-    }
-    private static boolean containsJavaScript(File file) {
         try (PDDocument document = Loader.loadPDF(file)) {
             return containsJavaScript(document);
         } catch (IOException e) {

@@ -46,6 +46,13 @@ public class FileJSCheckerTest {
         assertTrue(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
     }
 
+    @Test
+    void testSafeCheckFile_pdfWithJavaScriptInNestedObject() {
+        File pdfFile = new File(TEST_RESOURCES + "nestedJavascript.pdf");
+        assertTrue(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
+    }
+
+
     private File createMockPDF(boolean withJavaScript) throws IOException {
         PDDocument document = createTemporaryPDF(withJavaScript);
         File tempFile = File.createTempFile("mock", ".pdf");
@@ -55,17 +62,7 @@ public class FileJSCheckerTest {
         return tempFile;
     }
 
-    private PDDocument createMockDocument(boolean withJavaScript) {
-        PDDocument document = new PDDocument();
-        COSDictionary root = new COSDictionary();
-        if (withJavaScript) {
-            root.setItem(COSName.JS, COSName.getPDFName("alert('Hello, JavaScript!');"));
-        }
-        document.getDocument().setTrailer(root);
-        return document;
-    }
-
-    public PDDocument createTemporaryPDF(boolean withJavaScript) throws IOException {
+    private PDDocument createTemporaryPDF(boolean withJavaScript) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
         document.addPage(page);
