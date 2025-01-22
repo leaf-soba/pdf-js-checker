@@ -19,14 +19,14 @@ public class FileJSCheckerTest {
     private static final String TEST_RESOURCES = "src/test/resources/";
 
     @Test
-    void testSafeCheckFile_nonExistingFile() {
+    void nonExistingFile() {
         String path = TEST_RESOURCES + "non_existing_file.pdf";
         Exception exception = assertThrows(IllegalArgumentException.class, () -> FileJSChecker.safeCheckFile(path));
         assertEquals("file:" + path + " not exists!", exception.getMessage());
     }
 
     @Test
-    void testSafeCheckFile_nonPDFFile() throws IOException {
+    void nonPDFFile() throws IOException {
         File nonPdfFile = File.createTempFile("test", ".txt");
         nonPdfFile.deleteOnExit();
 
@@ -35,19 +35,35 @@ public class FileJSCheckerTest {
     }
 
     @Test
-    void testSafeCheckFile_pdfWithoutJavaScript() throws Exception {
+    void pdfWithoutJavaScript() throws Exception {
         File pdfFile = createMockPDF(false);
         assertFalse(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
     }
 
     @Test
-    void testSafeCheckFile_pdfWithJavaScript() throws Exception {
+    void pdfWithoutJavaScriptMultipleTimes() throws Exception {
+        for (int i=0;i<100;i++) {
+            File pdfFile = createMockPDF(false);
+            assertFalse(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
+        }
+    }
+
+    @Test
+    void pdfWithJavaScript() throws Exception {
         File pdfFile = createMockPDF(true);
         assertTrue(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
     }
 
     @Test
-    void testSafeCheckFile_pdfWithJavaScriptInNestedObject() {
+    void pdfWithJavaScriptMultipleTimes() throws Exception {
+        for (int i=0;i<100;i++) {
+            File pdfFile = createMockPDF(true);
+            assertTrue(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
+        }
+    }
+
+    @Test
+    void pdfWithJavaScriptInNestedObject() {
         File pdfFile = new File(TEST_RESOURCES + "nestedJavascript.pdf");
         assertTrue(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
     }
