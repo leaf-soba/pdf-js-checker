@@ -68,6 +68,11 @@ public class FileJSCheckerTest {
         assertTrue(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
     }
 
+    @Test
+    void largePdfWithoutJs() {
+        File pdfFile = new File(TEST_RESOURCES + "99MB.pdf");
+        assertFalse(FileJSChecker.safeCheckFile(pdfFile.getAbsolutePath()));
+    }
 
     private File createMockPDF(boolean withJavaScript) throws IOException {
         PDDocument document = createTemporaryPDF(withJavaScript);
